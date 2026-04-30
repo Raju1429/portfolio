@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raju Kasulavada | Battery Pack Design Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+  :root {
+    --bg: #0A0800;
+    --bg2: #0E0B00;
+    --surface: #161200;
+    --surface2: #1C1700;
+    --border: #2E2600;
+    --accent: #C9A84C;
+    --accent2: #F0C96A;
+    --accent3: #A07830;
+    --gold: #C9A84C;
+    --text: #F5EDD8;
+    --text2: #B8A070;
+    --text3: #6B5830;
+    --white: #FFF8E8;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: var(--accent); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform .1s, background .2s;
+    mix-blend-mode: normal;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1.5px solid var(--accent); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: all .15s ease;
+    opacity: .5;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content:''; position:fixed; inset:0; z-index:1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");
+    pointer-events: none; opacity: .5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 4rem; height: 70px;
+    background: rgba(10,8,0,.92);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-display); font-size: 1.6rem;
+    letter-spacing: .12em; color: var(--accent);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--text2); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--font-head); font-size: .78rem;
+    font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text2); text-decoration: none;
+    transition: color .2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; left:0; bottom:-4px;
+    width:0; height:1.5px; background: var(--accent);
+    transition: width .3s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    font-family: var(--font-head); font-size: .78rem;
+    font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    background: var(--accent); color: var(--bg);
+    padding: .5rem 1.4rem; text-decoration: none;
+    clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+    transition: background .2s;
+  }
+  .nav-cta:hover { background: var(--accent2); }
+
+  /* ── SECTIONS BASE ── */
+  section { position: relative; z-index: 2; }
+
+  /* ══════════════════════════════
+     PAGE 1 – HERO
+  ══════════════════════════════ */
+  #hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 100px 4rem 4rem;
+    overflow: hidden;
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at 30% 50%, black 30%, transparent 75%);
+  }
+  .hero-glow {
+    position: absolute; top: 20%; left: 5%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-left { position: relative; z-index: 3; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: .6rem;
+    background: rgba(201,168,76,.08); border: 1px solid rgba(201,168,76,.25);
+    padding: .35rem .9rem; margin-bottom: 1.8rem;
+    font-family: var(--font-head); font-size: .72rem;
+    font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent);
+    clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  }
+  .hero-tag::before {
+    content:''; width:6px; height:6px; border-radius:50%;
+    background: var(--accent); animation: blink 1.4s ease infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 7vw, 7rem);
+    line-height: .95;
+    color: var(--white);
+    letter-spacing: .04em;
+    margin-bottom: 1rem;
+  }
+  .hero-name .accent-line {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--accent);
+    display: block;
+  }
+  .hero-role {
+    font-family: var(--font-head); font-size: 1.05rem;
+    font-weight: 600; color: var(--accent2);
+    letter-spacing: .08em; text-transform: uppercase;
+    margin-bottom: 1.6rem;
+  }
+  .hero-desc {
+    font-size: .95rem; line-height: 1.75;
+    color: var(--text2); max-width: 480px;
+    margin-bottom: 2.4rem;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: .82rem; letter-spacing: .1em; text-transform: uppercase;
+    background: var(--accent); color: var(--bg);
+    padding: .8rem 2rem; text-decoration: none;
+    clip-path: polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+    transition: all .25s;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+  .btn-outline {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: .82rem; letter-spacing: .1em; text-transform: uppercase;
+    background: transparent; color: var(--accent);
+    border: 1.5px solid var(--accent);
+    padding: .8rem 2rem; text-decoration: none;
+    clip-path: polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+    transition: all .25s;
+  }
+  .btn-outline:hover { background: rgba(201,168,76,.1); transform: translateY(-2px); }
+  .hero-stats {
+    display: flex; gap: 2.5rem; margin-top: 3rem;
+    padding-top: 2rem; border-top: 1px solid var(--border);
+  }
+  .stat-item {}
+  .stat-num {
+    font-family: var(--font-display); font-size: 2.4rem;
+    color: var(--accent); line-height: 1;
+  }
+  .stat-label {
+    font-size: .72rem; color: var(--text3);
+    letter-spacing: .08em; text-transform: uppercase;
+    margin-top: .3rem;
+  }
+
+  /* Profile Photo Placeholder */
+  .hero-right {
+    display: flex; justify-content: center; align-items: center;
+    position: relative; z-index: 3;
+  }
+  .profile-frame {
+    position: relative; width: 420px; height: 520px;
+  }
+  .profile-frame::before {
+    content:''; position:absolute; inset:-2px;
+    background: linear-gradient(135deg, var(--accent), transparent, var(--accent2));
+    clip-path: polygon(20px 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%,0 20px);
+    z-index: -1;
+    animation: borderPulse 3s ease infinite;
+  }
+  @keyframes borderPulse { 0%,100%{opacity:.9} 50%{opacity:.4} }
+  .profile-frame::after {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(to bottom, transparent 50%, var(--bg) 100%);
+    z-index: 1; pointer-events: none;
+  }
+
+  /* IMAGE PLACEHOLDER 1 – PROFILE PHOTO */
+  .profile-photo-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #161200 0%, #1C1700 100%);
+    clip-path: polygon(20px 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%,0 20px);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .profile-photo-placeholder img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .img-placeholder-label {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    background: rgba(201,168,76,.15); border: 1px dashed var(--accent);
+    padding: .35rem .9rem;
+    font-family: var(--font-head); font-size: .65rem;
+    font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--accent); white-space: nowrap; z-index: 2;
+  }
+  .profile-icon-placeholder {
+    font-size: 5rem; color: var(--text3); opacity: .4;
+    margin-bottom: 1rem;
+  }
+  .profile-placeholder-text {
+    font-family: var(--font-head); font-size: .75rem;
+    color: var(--text3); letter-spacing: .1em; text-transform: uppercase;
+  }
+  .profile-corner {
+    position: absolute; width: 24px; height: 24px;
+    border-color: var(--accent); border-style: solid;
+  }
+  .profile-corner.tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+  .profile-corner.tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+  .profile-corner.bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+  .profile-corner.br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+  .floating-badge {
+    position: absolute; z-index: 10;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: .7rem 1rem;
+    backdrop-filter: blur(8px);
+  }
+  .floating-badge.badge-ev {
+    bottom: 60px; right: -30px;
+    clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .floating-badge.badge-ola {
+    top: 60px; left: -30px;
+    clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .badge-title {
+    font-family: var(--font-head); font-size: .65rem;
+    font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--accent2);
+  }
+  .badge-sub {
+    font-size: .7rem; color: var(--text2); margin-top: .2rem;
+  }
+
+  /* ══════════════════════════════
+     PAGE 2 – ABOUT
+  ══════════════════════════════ */
+  #about {
+    padding: 7rem 4rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+  .section-eyebrow {
+    font-family: var(--font-head); font-size: .72rem;
+    font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: .8rem;
+    display: flex; align-items: center; gap: .8rem;
+  }
+  .section-eyebrow::before {
+    content:''; width: 2rem; height: 1.5px; background: var(--accent);
+  }
+  .section-title {
+    font-family: var(--font-head); font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800; line-height: 1.1; color: var(--white);
+    margin-bottom: 1.5rem;
+  }
+  .section-title span { color: var(--accent); }
+
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .about-image-wrap { position: relative; }
+
+  /* IMAGE PLACEHOLDER 2 – ABOUT SECTION */
+  .about-img-placeholder {
+    width: 100%; height: 500px;
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+    clip-path: polygon(0 0,calc(100% - 30px) 0,100% 30px,100% 100%,30px 100%,0 calc(100% - 30px));
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .about-img-placeholder img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    clip-path: polygon(0 0,calc(100% - 30px) 0,100% 30px,100% 100%,30px 100%,0 calc(100% - 30px));
+  }
+  .about-accent-line {
+    position: absolute; left: -20px; top: 40px; bottom: 40px;
+    width: 3px;
+    background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+  }
+  .about-text p {
+    font-size: .95rem; line-height: 1.85; color: var(--text2);
+    margin-bottom: 1.4rem;
+  }
+  .about-info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    margin-top: 2rem;
+  }
+  .info-item {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1rem 1.2rem;
+    clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  }
+  .info-label {
+    font-size: .65rem; color: var(--text3);
+    letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: .3rem;
+  }
+  .info-value {
+    font-family: var(--font-head); font-size: .88rem;
+    font-weight: 600; color: var(--text);
+  }
+
+  /* ══════════════════════════════
+     PAGE 3 – SKILLS
+  ══════════════════════════════ */
+  #skills {
+    padding: 7rem 4rem;
+    background: var(--bg);
+  }
+  .skills-intro { max-width: 560px; margin-bottom: 4rem; }
+  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; }
+  .skill-card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 2rem; position: relative; overflow: hidden;
+    transition: all .3s;
+    clip-path: polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+  }
+  .skill-card::before {
+    content:''; position:absolute; top:0; left:0; right:0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: scaleX(0); transition: transform .4s;
+    transform-origin: center;
+  }
+  .skill-card:hover::before { transform: scaleX(1); }
+  .skill-card:hover { background: var(--surface2); transform: translateY(-4px); }
+  .skill-icon {
+    font-size: 1.8rem; margin-bottom: 1.2rem;
+    color: var(--accent);
+  }
+  .skill-card h3 {
+    font-family: var(--font-head); font-size: 1rem;
+    font-weight: 700; color: var(--white);
+    margin-bottom: .8rem;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .skill-tag {
+    font-size: .7rem; letter-spacing: .06em;
+    padding: .25rem .65rem;
+    background: rgba(201,168,76,.07); border: 1px solid rgba(201,168,76,.2);
+    color: var(--text2);
+    clip-path: polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
+  }
+
+  .tech-tools {
+    margin-top: 4rem;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+  }
+  .tool-item {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1.4rem; text-align: center;
+    transition: all .3s;
+    clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .tool-item:hover {
+    border-color: var(--accent); background: rgba(201,168,76,.06);
+    transform: translateY(-3px);
+  }
+  .tool-item i { font-size: 1.6rem; color: var(--accent); margin-bottom: .6rem; display: block; }
+  .tool-item span {
+    font-family: var(--font-head); font-size: .78rem;
+    font-weight: 600; color: var(--text2);
+    letter-spacing: .05em;
+  }
+
+  /* ══════════════════════════════
+     PAGE 4 – CAREER JOURNEY ROADMAP
+  ══════════════════════════════ */
+  #journey {
+    padding: 7rem 4rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .journey-header {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: start;
+    margin-bottom: 5rem;
+  }
+  .journey-3d-placeholder {
+    width: 100%; height: 360px;
+    background: linear-gradient(135deg, #0E0900 0%, #161100 50%, #0A0700 100%);
+    border: 1px solid var(--border);
+    clip-path: polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .journey-3d-placeholder::before {
+    content:''; position:absolute; inset:0;
+    background: 
+      radial-gradient(circle at 30% 70%, rgba(201,168,76,.08) 0%, transparent 60%),
+      radial-gradient(circle at 70% 30%, rgba(240,201,106,.05) 0%, transparent 60%);
+  }
+  .journey-3d-placeholder img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .engineer-placeholder-icon {
+    font-size: 5rem; color: var(--accent);
+    opacity: .5; margin-bottom: 1rem; z-index: 1;
+  }
+  .engineer-placeholder-text {
+    font-family: var(--font-head); font-size: .75rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--text3); z-index: 1;
+  }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 3rem; }
+  .timeline::before {
+    content:''; position:absolute; left: .75rem; top: 0; bottom: 0;
+    width: 1.5px;
+    background: linear-gradient(to bottom, transparent, var(--accent) 10%, var(--accent2) 90%, transparent);
+  }
+  .timeline-item {
+    position: relative; margin-bottom: 2.8rem;
+    padding-left: 1.5rem;
+    animation: fadeSlideIn .5s ease both;
+  }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .timeline-item::before {
+    content:''; position:absolute; left: -2.25rem; top: .5rem;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--bg2); border: 2.5px solid var(--accent);
+    z-index: 1; transition: all .3s;
+  }
+  .timeline-item:hover::before {
+    background: var(--accent); box-shadow: 0 0 14px rgba(201,168,76,.6);
+  }
+  .timeline-item.work::before { border-color: var(--accent2); }
+  .timeline-item.work:hover::before { background: var(--accent2); box-shadow: 0 0 14px rgba(240,201,106,.6); }
+  .timeline-year {
+    font-family: var(--font-display); font-size: 1rem;
+    color: var(--accent); letter-spacing: .1em;
+    margin-bottom: .4rem;
+  }
+  .timeline-item.work .timeline-year { color: var(--accent2); }
+  .timeline-title {
+    font-family: var(--font-head); font-size: 1.1rem;
+    font-weight: 700; color: var(--white);
+    margin-bottom: .3rem;
+  }
+  .timeline-sub {
+    font-size: .85rem; color: var(--text2); line-height: 1.6;
+  }
+  .timeline-badge {
+    display: inline-block; margin-top: .5rem;
+    font-size: .65rem; letter-spacing: .1em; text-transform: uppercase;
+    padding: .25rem .7rem;
+    background: rgba(201,168,76,.08); border: 1px solid rgba(201,168,76,.22);
+    color: var(--accent);
+    clip-path: polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
+  }
+  .timeline-item.work .timeline-badge {
+    background: rgba(240,201,106,.08); border-color: rgba(240,201,106,.22);
+    color: var(--accent2);
+  }
+
+  /* ══════════════════════════════
+     PAGE 5 – PROJECTS / WORK
+  ══════════════════════════════ */
+  #projects {
+    padding: 7rem 4rem;
+    background: var(--bg);
+  }
+  .projects-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3.5rem; }
+  .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .project-card {
+    background: var(--surface); border: 1px solid var(--border);
+    overflow: hidden; position: relative;
+    clip-path: polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,24px 100%,0 calc(100% - 24px));
+    transition: all .3s;
+  }
+  .project-card:hover { border-color: rgba(201,168,76,.4); transform: translateY(-5px); }
+  .project-card.featured { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; }
+
+  /* IMAGE PLACEHOLDER 3 – OLA S1 PROJECT */
+  /* IMAGE PLACEHOLDER 4 – ROADSTER X PROJECT */
+  /* IMAGE PLACEHOLDER 5 – THERMAL MGMT PROJECT */
+  /* IMAGE PLACEHOLDER 6 – BATTERY PACK PROJECT */
+  .project-img-placeholder {
+    height: 220px;
+    background: linear-gradient(135deg, var(--surface2) 0%, #1A1200 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .project-card.featured .project-img-placeholder {
+    height: 100%; min-height: 300px; border-bottom: none;
+    border-right: 1px solid var(--border);
+  }
+  .project-img-placeholder img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .project-img-icon { font-size: 2.5rem; color: var(--text3); opacity: .5; margin-bottom: .5rem; }
+  .project-body { padding: 1.8rem; }
+  .project-tag {
+    font-size: .65rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent2); font-family: var(--font-head); font-weight: 700;
+    margin-bottom: .6rem; display: block;
+  }
+  .project-card.featured .project-body { padding: 2.5rem; display: flex; flex-direction: column; justify-content: center; }
+  .project-title {
+    font-family: var(--font-head); font-size: 1.2rem;
+    font-weight: 800; color: var(--white); margin-bottom: .7rem;
+  }
+  .project-card.featured .project-title { font-size: 1.6rem; }
+  .project-desc { font-size: .88rem; line-height: 1.7; color: var(--text2); margin-bottom: 1.2rem; }
+  .project-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .chip {
+    font-size: .68rem; padding: .2rem .6rem;
+    background: rgba(255,255,255,.04); border: 1px solid var(--border);
+    color: var(--text3);
+    clip-path: polygon(3px 0,100% 0,100% calc(100% - 3px),calc(100% - 3px) 100%,0 100%,0 3px);
+  }
+
+  /* ══════════════════════════════
+     PAGE 6 – EXPERTISE
+  ══════════════════════════════ */
+  #expertise {
+    padding: 7rem 4rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+  .expertise-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 5rem; align-items: start; }
+  .expertise-left p { font-size: .92rem; line-height: 1.8; color: var(--text2); margin-top: 1.5rem; }
+  .expertise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .expertise-item {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1.5rem; position: relative; overflow: hidden;
+    transition: all .3s;
+    clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .expertise-item:hover { border-color: rgba(201,168,76,.35); transform: translateY(-3px); }
+  .expertise-item::before {
+    content:''; position:absolute; top:0; left:0;
+    width: 3px; height: 100%;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+    opacity: 0; transition: opacity .3s;
+  }
+  .expertise-item:hover::before { opacity: 1; }
+  .expertise-item h4 {
+    font-family: var(--font-head); font-size: .9rem;
+    font-weight: 700; color: var(--white); margin-bottom: .4rem;
+  }
+  .expertise-item p { font-size: .82rem; color: var(--text2); line-height: 1.6; }
+  .vehicle-types {
+    margin-top: 2rem;
+    display: flex; gap: 1rem;
+  }
+  .vehicle-badge {
+    flex: 1; padding: 1rem; text-align: center;
+    background: var(--surface); border: 1px solid var(--border);
+    transition: all .3s;
+    clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .vehicle-badge:hover { border-color: var(--accent); }
+  .vehicle-badge .v-icon { font-size: 1.6rem; margin-bottom: .4rem; color: var(--accent); }
+  .vehicle-badge span { font-family: var(--font-head); font-size: .72rem; font-weight: 600; color: var(--text2); display: block; }
+
+  /* ══════════════════════════════
+     PAGE 7 – EXPERIENCE
+  ══════════════════════════════ */
+  #experience {
+    padding: 7rem 4rem;
+    background: var(--bg);
+  }
+  .exp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3.5rem; }
+  .exp-card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 2.5rem; position: relative; overflow: hidden;
+    clip-path: polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));
+    transition: all .3s;
+  }
+  .exp-card:hover { border-color: rgba(201,168,76,.3); transform: translateY(-4px); }
+  .exp-company {
+    font-family: var(--font-display); font-size: 1.5rem;
+    letter-spacing: .08em; color: var(--white);
+    margin-bottom: .4rem;
+  }
+  .exp-role {
+    font-family: var(--font-head); font-size: .85rem;
+    font-weight: 600; color: var(--accent2); letter-spacing: .06em;
+    text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .exp-location { font-size: .8rem; color: var(--text3); margin-bottom: 1.4rem; display: flex; align-items: center; gap: .4rem; }
+  .exp-divider { height: 1px; background: var(--border); margin-bottom: 1.4rem; }
+  .exp-list { list-style: none; }
+  .exp-list li {
+    font-size: .85rem; color: var(--text2);
+    padding: .4rem 0; padding-left: 1rem;
+    position: relative; line-height: 1.6;
+  }
+  .exp-list li::before {
+    content:'▸'; position:absolute; left:0;
+    color: var(--accent); font-size: .7rem;
+  }
+
+  /* IMAGE PLACEHOLDER 7 – MIDWEST ENERGY SOLUTIONS */
+  /* IMAGE PLACEHOLDER 8 – OLA ELECTRIC WORKPLACE */
+  .exp-img-placeholder {
+    height: 160px; margin-top: 1.5rem;
+    background: linear-gradient(135deg, var(--surface2) 0%, #140F00 100%);
+    display: flex; align-items: center; justify-content: center;
+    border: 1px dashed var(--border);
+    position: relative;
+  }
+  .exp-img-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ══════════════════════════════
+     PAGE 8 – LANGUAGES & HOBBIES
+  ══════════════════════════════ */
+  #personal {
+    padding: 7rem 4rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+  .personal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; }
+  .lang-items { display: flex; flex-direction: column; gap: .8rem; margin-top: 2rem; }
+  .lang-item { display: flex; align-items: center; gap: 1rem; }
+  .lang-flag {
+    width: 2.5rem; height: 2.5rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    background: var(--surface); border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .lang-info { flex: 1; }
+  .lang-name {
+    font-family: var(--font-head); font-size: .9rem;
+    font-weight: 600; color: var(--white);
+  }
+  .lang-bar {
+    height: 3px; background: var(--border);
+    border-radius: 2px; margin-top: .4rem; position: relative;
+  }
+  .lang-bar-fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .hobbies-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+  .hobby-card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1.2rem; display: flex; gap: .8rem; align-items: center;
+    transition: all .3s;
+    clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  }
+  .hobby-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .hobby-icon { font-size: 1.4rem; color: var(--accent3); }
+  .hobby-label {
+    font-family: var(--font-head); font-size: .82rem;
+    font-weight: 600; color: var(--text);
+  }
+
+  /* ══════════════════════════════
+     PAGE 9 – GALLERY (Image Placeholders)
+  ══════════════════════════════ */
+  #gallery {
+    padding: 7rem 4rem;
+    background: var(--bg);
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto auto;
+    gap: 1rem; margin-top: 3rem;
+  }
+  .gallery-item {
+    position: relative; overflow: hidden;
+    clip-path: polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);
+    background: var(--surface); border: 1px solid var(--border);
+    transition: all .3s;
+  }
+  .gallery-item:hover { border-color: var(--accent); }
+  .gallery-item:hover .gallery-overlay { opacity: 1; }
+  .gallery-item.large { grid-column: span 2; grid-row: span 2; }
+  /* IMAGE PLACEHOLDER 9 – GALLERY IMAGE 1 */
+  /* IMAGE PLACEHOLDER 10 – GALLERY IMAGE 2 */
+  .gallery-img-placeholder {
+    width: 100%; height: 200px;
+    background: linear-gradient(135deg, var(--surface2), #1A1200);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .gallery-item.large .gallery-img-placeholder { height: 420px; }
+  .gallery-img-placeholder img { width:100%; height:100%; object-fit:cover; display:block; }
+  .gallery-overlay {
+    position: absolute; inset: 0;
+    background: rgba(201,168,76,.08);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .3s;
+  }
+  .gallery-overlay i { font-size: 1.5rem; color: var(--accent); }
+  .gallery-caption {
+    padding: .7rem .9rem;
+    font-family: var(--font-head); font-size: .7rem;
+    font-weight: 600; color: var(--text2);
+    letter-spacing: .06em;
+  }
+
+  /* ══════════════════════════════
+     PAGE 10 – CONTACT
+  ══════════════════════════════ */
+  #contact {
+    padding: 7rem 4rem 5rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+  .contact-layout { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; }
+  .contact-info-items { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 2.5rem; }
+  .contact-item {
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1.2rem 1.4rem;
+    clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+    transition: all .3s;
+  }
+  .contact-item:hover { border-color: rgba(201,168,76,.3); }
+  .contact-icon-wrap {
+    width: 2.5rem; height: 2.5rem; flex-shrink: 0;
+    background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.25);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent); font-size: .9rem;
+  }
+  .contact-item-label {
+    font-size: .65rem; color: var(--text3);
+    letter-spacing: .1em; text-transform: uppercase; margin-bottom: .25rem;
+  }
+  .contact-item-value {
+    font-family: var(--font-head); font-size: .9rem;
+    font-weight: 600; color: var(--text);
+  }
+  .contact-item-value a { color: var(--accent); text-decoration: none; }
+  .contact-item-value a:hover { text-decoration: underline; }
+
+  /* Map */
+  .map-section { margin-top: 2.5rem; }
+  .map-title {
+    font-family: var(--font-head); font-size: .75rem;
+    font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .map-title::before { content:''; width: 1.5rem; height: 1.5px; background: var(--text3); }
+  .map-container {
+    width: 100%; height: 420px; position: relative;
+    border: 1px solid var(--border);
+    clip-path: polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,0 100%);
+    overflow: hidden;
+  }
+  .map-container iframe {
+    width: 100%; height: 100%; border: none; display: block;
+    filter: invert(90%) hue-rotate(155deg) saturate(1.1) brightness(.7) sepia(.35);
+  }
+  .map-overlay-info {
+    position: absolute; bottom: 1.2rem; left: 1.2rem;
+    background: rgba(5,10,15,.9); backdrop-filter: blur(8px);
+    border: 1px solid var(--border); padding: .8rem 1rem;
+    clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  }
+  .map-overlay-info .loc-name {
+    font-family: var(--font-head); font-size: .82rem;
+    font-weight: 700; color: var(--accent);
+  }
+  .map-overlay-info .loc-detail {
+    font-size: .72rem; color: var(--text2); margin-top: .2rem;
+  }
+
+  /* Contact Form */
+  .contact-form { margin-top: 0; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label {
+    display: block; font-family: var(--font-head); font-size: .7rem;
+    font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: .5rem;
+  }
+  .form-group input, .form-group textarea {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: .85rem 1rem;
+    font-family: var(--font-body); font-size: .9rem;
+    outline: none; transition: border-color .25s;
+    clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+    resize: none;
+  }
+  .form-group input:focus, .form-group textarea:focus {
+    border-color: var(--accent);
+    background: rgba(201,168,76,.04);
+  }
+  .form-group textarea { height: 120px; }
+  .btn-submit {
+    width: 100%; padding: .95rem;
+    font-family: var(--font-head); font-size: .85rem;
+    font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    background: var(--accent); color: var(--bg); border: none;
+    cursor: pointer;
+    clip-path: polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+    transition: all .25s;
+  }
+  .btn-submit:hover { background: var(--accent2); }
+
+  /* ══════════════════════════════
+     FOOTER
+  ══════════════════════════════ */
+  footer {
+    background: var(--bg); border-top: 1px solid var(--border);
+    padding: 2.5rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    position: relative; z-index: 2;
+  }
+  .footer-left { font-size: .8rem; color: var(--text3); }
+  .footer-left strong { color: var(--accent); }
+  .footer-socials { display: flex; gap: 1rem; }
+  .social-btn {
+    width: 38px; height: 38px;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text2); font-size: .85rem; text-decoration: none;
+    transition: all .25s;
+    clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  }
+  .social-btn:hover { background: rgba(201,168,76,.1); color: var(--accent); border-color: rgba(201,168,76,.3); }
+  .footer-right { font-size: .75rem; color: var(--text3); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
+    z-index: 2000; transition: width .1s;
+  }
+
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal { opacity: 0; transform: translateY(30px); transition: all .6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 1024px) {
+    nav { padding: 0 2rem; }
+    .nav-links { display: none; }
+    #hero { grid-template-columns: 1fr; padding: 100px 2rem 4rem; }
+    .hero-right { display: none; }
+    #about, #skills, #journey, #projects, #expertise, #experience, #personal, #gallery, #contact { padding: 5rem 2rem; }
+    .about-grid, .journey-header, .projects-grid, .expertise-layout, .exp-grid, .personal-grid, .contact-layout { grid-template-columns: 1fr; }
+    .projects-grid .project-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+    .gallery-grid { grid-template-columns: repeat(2,1fr); }
+    .gallery-item.large { grid-column: span 2; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    .tech-tools { grid-template-columns: repeat(3,1fr); }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress" id="scrollBar"></div>
+
+<!-- ══ NAVIGATION ══ -->
+<nav>
+  <a href="#hero" class="nav-logo">RK<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#journey">Journey</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#expertise">Expertise</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#personal">Personal</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Contact</a>
+</nav>
+
+<!-- ══════════════════════════════
+  PAGE 1 – HERO
+══════════════════════════════ -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-left">
+    <div class="hero-tag">EV Battery Pack Design Engineer</div>
+    <h1 class="hero-name">
+      RAJU
+      <span class="accent-line">KASULAVADA</span>
+    </h1>
+    <p class="hero-role">Designing the Future of Electric Mobility</p>
+    <p class="hero-desc">
+      Battery Pack Design Engineer at Ola Electric Technologies, specializing in high-voltage EV battery systems, thermal management, and structural packaging for 2W, 3W & 4W electric vehicles.
+    </p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-primary">View My Work</a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">2+</div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Vehicle Types</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3</div>
+        <div class="stat-label">CAD Tools</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="profile-frame">
+      <!-- ✦ IMAGE PLACEHOLDER 1: PROFILE PHOTO ✦ -->
+      <div class="profile-photo-placeholder">
+        <div class="profile-corner tl"></div>
+        <div class="profile-corner tr"></div>
+        <div class="profile-corner bl"></div>
+        <div class="profile-corner br"></div>
+        <i class="fas fa-user profile-icon-placeholder"></i>
+        <span class="profile-placeholder-text">Profile Photo</span>
+        <span class="img-placeholder-label">[ IMG-01: Profile Photo ]</span>
+        <!-- Replace entire div with: <img src="your-profile-photo.jpg" alt="Raju Kasulavada"> -->
+      </div>
+
+      <div class="floating-badge badge-ola">
+        <div class="badge-title">Ola Electric</div>
+        <div class="badge-sub">Battery Pack Design</div>
+      </div>
+      <div class="floating-badge badge-ev">
+        <div class="badge-title">Ola S1 Gen 3</div>
+        <div class="badge-sub">Active Contributor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  PAGE 2 – ABOUT
+══════════════════════════════ -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-image-wrap reveal">
+      <div class="about-accent-line"></div>
+      <!-- ✦ IMAGE PLACEHOLDER 2: ABOUT SECTION ✦ -->
+      <div class="about-img-placeholder">
+        <i class="fas fa-bolt" style="font-size:3rem; color: var(--text3); opacity:.4; margin-bottom:.8rem;"></i>
+        <span class="img-placeholder-label">[ IMG-02: About / Engineering Photo ]</span>
+        <!-- Replace with: <img src="your-about-photo.jpg" alt="Raju at Work"> -->
+      </div>
+    </div>
+    <div class="about-text reveal">
+      <div class="section-eyebrow">About Me</div>
+      <h2 class="section-title">Engineer. <span>Innovator.</span> EV Enthusiast.</h2>
+      <p>
+        I'm Raju Kasulavada, a Battery Pack Design Engineer from Siddipet, Telangana. My passion lies at the intersection of mechanical engineering and electric vehicle technology — designing battery systems that power a cleaner, smarter future.
+      </p>
+      <p>
+        Currently working at Ola Electric Technologies in Koramangala, I contribute to cutting-edge EV platforms including the Ola S1 Gen 3 scooter and the Roadster X Plus — bringing together deep knowledge of cell chemistry, thermal management, and structural packaging.
+      </p>
+      <div class="about-info-grid">
+        <div class="info-item">
+          <div class="info-label">Native Place</div>
+          <div class="info-value">Siddipet, Telangana</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Current Role</div>
+          <div class="info-value">Design Engineer, Ola Electric</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Education</div>
+          <div class="info-value">B.Tech Mechanical Engg.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Specialization</div>
+          <div class="info-value">EV Battery Pack Design</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  PAGE 3 – SKILLS
+══════════════════════════════ -->
+<section id="skills">
+  <div class="skills-intro reveal">
+    <div class="section-eyebrow">Core Skills</div>
+    <h2 class="section-title">Technical <span>Proficiency</span></h2>
+  </div>
+
+  <div class="skills-grid reveal">
+    <div class="skill-card">
+      <div class="skill-icon"><i class="fas fa-battery-full"></i></div>
+      <h3>Battery Pack Design</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">LV Systems</span>
+        <span class="skill-tag">HV Systems</span>
+        <span class="skill-tag">Cell Chemistry</span>
+        <span class="skill-tag">Cell Analysis</span>
+        <span class="skill-tag">Swappable Packs</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><i class="fas fa-thermometer-half"></i></div>
+      <h3>Thermal Management</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Cooling Systems</span>
+        <span class="skill-tag">Heat Dissipation</span>
+        <span class="skill-tag">TMS Design</span>
+        <span class="skill-tag">Performance Opt.</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><i class="fas fa-cube"></i></div>
+      <h3>Structural Packaging</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Layout Design</span>
+        <span class="skill-tag">Safety Optimization</span>
+        <span class="skill-tag">Enclosure Design</span>
+        <span class="skill-tag">Weight Analysis</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><i class="fas fa-drafting-compass"></i></div>
+      <h3>CAD & Design Tools</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Siemens NX</span>
+        <span class="skill-tag">CATIA V5</span>
+        <span class="skill-tag">SolidWorks</span>
+        <span class="skill-tag">Blender</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><i class="fas fa-code"></i></div>
+      <h3>Web Development</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">HTML5</span>
+        <span class="skill-tag">CSS3</span>
+        <span class="skill-tag">JavaScript</span>
+        <span class="skill-tag">Bootstrap</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><i class="fas fa-car-side"></i></div>
+      <h3>Vehicle Applications</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">2-Wheelers</span>
+        <span class="skill-tag">3-Wheelers</span>
+        <span class="skill-tag">4-Wheelers</span>
+        <span class="skill-tag">EV R&D</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tech-tools reveal">
+    <div class="tool-item"><i class="fas fa-vector-square"></i><span>Siemens NX</span></div>
+    <div class="tool-item"><i class="fas fa-object-group"></i><span>CATIA V5</span></div>
+    <div class="tool-item"><i class="fas fa-shapes"></i><span>SolidWorks</span></div>
+    <div class="tool-item"><i class="fas fa-paint-brush"></i><span>Blender</span></div>
+    <div class="tool-item"><i class="fab fa-html5"></i><span>HTML5</span></div>
+    <div class="tool-item"><i class="fab fa-css3-alt"></i><span>CSS3</span></div>
+    <div class="tool-item"><i class="fab fa-js-square"></i><span>JavaScript</span></div>
+    <div class="tool-item"><i class="fab fa-bootstrap"></i><span>Bootstrap</span></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  PAGE 4 – CAREER JOURNEY ROADMAP
+══════════════════════════════ -->
+<section id="journey">
+  <div class="section-eyebrow reveal">Career Roadmap</div>
+  <h2 class="section-title reveal">My <span>Journey</span></h2>
+
+  <div class="journey-header">
+    <!-- ✦ IMAGE PLACEHOLDER 3: 3D ENGINEER IMAGE (MILESTONE SECTION) ✦ -->
+    <div class="journey-3d-placeholder reveal">
+      <i class="fas fa-user-cog engineer-placeholder-icon"></i>
+      <span class="engineer-placeholder-text">3D Engineer Image</span>
+      <span class="img-placeholder-label" style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);">
+        [ IMG-03: 3D Engineer Illustration ]
+      </span>
+      <!-- Replace with: <img src="3d-engineer.png" alt="3D Engineer Illustration"> -->
+    </div>
+
+    <div class="reveal">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-year">2016 – 2017</div>
+          <div class="timeline-title">10th Standard</div>
+          <div class="timeline-sub">Completed secondary education — the foundation of a disciplined, analytical mindset.</div>
+          <span class="timeline-badge">Education Milestone</span>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2017 – 2018</div>
+          <div class="timeline-title">PUC 1 – Pre-University</div>
+          <div class="timeline-sub">IIIT Basar, Adilabad — began higher secondary studies with focus on science and mathematics.</div>
+          <span class="timeline-badge">IIIT Basar</span>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2018 – 2019</div>
+          <div class="timeline-title">PUC 2 – Pre-University</div>
+          <div class="timeline-sub">Completed pre-university education, qualifying for engineering entrance examinations.</div>
+          <span class="timeline-badge">Academic Achievement</span>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2019 – 2023</div>
+          <div class="timeline-title">B.Tech – Mechanical Engineering</div>
+          <div class="timeline-sub">Specialized in Design Engineering with focus on EV R&D and Vehicle Design. Built deep expertise in CAD tools and battery systems.</div>
+          <span class="timeline-badge">Design Engineering Specialization</span>
+        </div>
+        <div class="timeline-item work">
+          <div class="timeline-year">2023</div>
+          <div class="timeline-title">Junior Design Engineer</div>
+          <div class="timeline-sub">Midwest Energy Solutions — First professional role, gaining hands-on experience in energy system design.</div>
+          <span class="timeline-badge">Professional Start</span>
+        </div>
+        <div class="timeline-item work">
+          <div class="timeline-year">2023 – Present</div>
+          <div class="timeline-title">Design Engineer – Ola Electric Technologies</div>
+          <div class="timeline-sub">Koramangala — Working on EV Battery Pack Design for Ola S1 Gen 3 and Roadster X Plus platforms.</div>
+          <span class="timeline-badge">Current Role</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  PAGE 5 – PROJECTS
+══════════════════════════════ -->
+<section id="projects">
+  <div class="projects-header reveal">
+    <div>
+      <div class="section-eyebrow">Projects</div>
+      <h2 class="section-title">Key <span>Contributions</span></h2>
+    </div>
+  </div>
+
+  <div class="projects-grid reveal">
+    <!-- Featured Project -->
+    <div class="project-card featured">
+      <!-- ✦ IMAGE PLACEHOLDER 4: OLA S1 GEN 3 PROJECT ✦ -->
+      <div class="project-img-placeholder">
+        <i class="fas fa-motorcycle project-img-icon"></i>
+        <span class="img-placeholder-label">[ IMG-04: Ola S1 Gen 3 Scooter ]</span>
+        <!-- Replace with: <img src="ola-s1-gen3.jpg" alt="Ola S1 Gen 3"> -->
+      </div>
+      <div class="project-body">
+        <span class="project-tag">Featured · Active Project</span>
+        <div class="project-title">Ola S1 Gen 3 — Battery Pack Design</div>
+        <p class="project-desc">Leading battery pack design contributions for the Ola S1 Gen 3 scooter. Focused on cell arrangement optimization, thermal management integration, and structural enclosure design to meet performance and safety standards.</p>
+        <div class="project-chips">
+          <span class="chip">LV Battery Pack</span>
+          <span class="chip">Thermal Management</span>
+          <span class="chip">Siemens NX</span>
+          <span class="chip">CATIA V5</span>
+          <span class="chip">Ola Electric</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <!-- ✦ IMAGE PLACEHOLDER 5: ROADSTER X PLUS ✦ -->
+      <div class="project-img-placeholder">
+        <i class="fas fa-bolt project-img-icon"></i>
+        <span class="img-placeholder-label">[ IMG-05: Roadster X Plus ]</span>
+        <!-- Replace with: <img src="roadster-x-plus.jpg" alt="Roadster X Plus"> -->
+      </div>
+      <div class="project-body">
+        <span class="project-tag">Active Project</span>
+        <div class="project-title">Roadster X Plus Battery System</div>
+        <p class="project-desc">Working on high-performance battery system design for the Roadster X Plus — a flagship EV platform with advanced power delivery requirements.</p>
+        <div class="project-chips">
+          <span class="chip">HV Battery</span><span class="chip">Performance Pack</span><span class="chip">SolidWorks</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <!-- ✦ IMAGE PLACEHOLDER 6: THERMAL MANAGEMENT ✦ -->
+      <div class="project-img-placeholder">
+        <i class="fas fa-thermometer-half project-img-icon"></i>
+        <span class="img-placeholder-label">[ IMG-06: Thermal Management System ]</span>
+        <!-- Replace with: <img src="thermal-management.jpg" alt="Thermal System"> -->
+      </div>
+      <div class="project-body">
+        <span class="project-tag">R&D Project</span>
+        <div class="project-title">Swappable Battery Pack Design</div>
+        <p class="project-desc">Designed modular swappable battery pack architecture for 2W EVs — enabling fast battery swap capability and reducing downtime for fleet applications.</p>
+        <div class="project-chips">
+          <span class="chip">Swappable Pack</span><span class="chip">2-Wheeler</span><span class="chip">Modular Design</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  PAGE 6 – EXPERTISE
+══════════════════════════════ -->
+<section id="expertise">
+  <div class="expertise-layout">
+    <div class="expertise-left reveal">
+      <div class="section-eyebrow">Expertise</div>
+      <h2 class="section-title">Battery <span>Domain</span> Knowledge</h2>
+      <p>Deep technical expertise in EV battery pack engineering — from cell-level chemistry understanding to full system integration across vehicle platforms.</p>
+      <div class="vehicle-types">
+        <div class="vehicle-badge">
+          <div class="v-icon"><i class="fas fa-motorcycle"></i></div>
+          <span>2-Wheeler</span>
+        </div>
+        <div class="vehicle-badge">
+          <div class="v-icon"><i class="fas fa-truck-pickup"></i></div>
+          <span>3-Wheeler</span>
+        </div>
+        <div class="vehicle-badge">
+          <div class="v-icon"><i class="fas fa-car"></i></div>
+          <span>4-Wheeler</span>
+        </div>
+      </div>
+    </div>
+    <div class="expertise-grid reveal">
+      <div class="expertise-item">
+        <h4>LV & HV Battery Systems</h4>
+        <p>Design of low and high-voltage battery packs with compliance to international safety standards.</p>
+      </div>
+      <div class="expertise-item">
+        <h4>Cell Chemistry</h4>
+        <p>Understanding of NMC, LFP, and NCA cell chemistries — selecting the right cell for each application.</p>
+      </div>
+      <div class="expertise-item">
+        <h4>Cell Behavior Analysis</h4>
+        <p>Analyzing cell behavior under various load, temperature, and aging conditions for reliable pack design.</p>
+      </div>
+      <div class="expertise-item">
+        <h4>Thermal Management</h4>
+        <p>Designing active and passive thermal management systems to maintain optimal battery operating temperatures.</p>
+      </div>
+      <div class="expertise-item">
+        <h4>Structural Packaging</h4>
+        <p>Optimized structural enclosure and layout design balancing weight, safety, and volumetric efficiency.</p>
+      </div>
+      <div class="expertise-item">
+        <h4>Safety & Performance</h4>
+        <p>Integrating safety features — BMS coordination, venting systems, and crash protection — into pack design.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  PAGE 7 – EXPERIENCE
+══════════════════════════════ -->
+<section id="experience">
+  <div class="section-eyebrow reveal">Work History</div>
+  <h2 class="section-title reveal">Professional <span>Experience</span></h2>
+
+  <div class="exp-grid reveal">
+    <div class="exp-card">
+      <div class="exp-company">Midwest Energy</div>
+      <div class="exp-role">Junior Design Engineer</div>
+      <div class="exp-location"><i class="fas fa-map-marker-alt"></i> Energy Solutions Division</div>
+      <div class="exp-divider"></div>
+      <ul class="exp-list">
+        <li>Assisted in energy system design and component layout</li>
+        <li>Gained practical exposure to CAD-based design workflows</li>
+        <li>Collaborated with senior engineers on prototype development</li>
+        <li>Contributed to technical documentation and design reviews</li>
+      </ul>
+      <!-- ✦ IMAGE PLACEHOLDER 7: MIDWEST ENERGY SOLUTIONS ✦ -->
+      <div class="exp-img-placeholder">
+        <i class="fas fa-industry" style="font-size:2rem;color:var(--text3);opacity:.4;margin-bottom:.5rem;"></i>
+        <span class="img-placeholder-label">[ IMG-07: Midwest Energy Solutions ]</span>
+        <!-- Replace with: <img src="midwest-energy.jpg" alt="Midwest Energy Solutions"> -->
+      </div>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-company">Ola Electric</div>
+      <div class="exp-role">Battery Pack Design Engineer</div>
+      <div class="exp-location"><i class="fas fa-map-marker-alt"></i> Koramangala, Bengaluru</div>
+      <div class="exp-divider"></div>
+      <ul class="exp-list">
+        <li>Designing EV battery packs for Ola S1 Gen 3 scooter platform</li>
+        <li>Working on Roadster X Plus high-performance battery system</li>
+        <li>Thermal management system design and optimization</li>
+        <li>Structural packaging and enclosure design using Siemens NX & CATIA V5</li>
+        <li>Cross-functional collaboration with BMS and manufacturing teams</li>
+      </ul>
+      <!-- ✦ IMAGE PLACEHOLDER 8: OLA ELECTRIC WORKPLACE ✦ -->
+      <div class="exp-img-placeholder">
+        <i class="fas fa-charging-station" style="font-size:2rem;color:var(--text3);opacity:.4;margin-bottom:.5rem;"></i>
+        <span class="img-placeholder-label">[ IMG-08: Ola Electric Technologies ]</span>
+        <!-- Replace with: <img src="ola-electric.jpg" alt="Ola Electric Technologies"> -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  PAGE 8 – LANGUAGES & HOBBIES
+══════════════════════════════ -->
+<section id="personal">
+  <div class="section-eyebrow reveal">Beyond Engineering</div>
+  <h2 class="section-title reveal">Personal <span>Profile</span></h2>
+
+  <div class="personal-grid reveal">
+    <div>
+      <h3 style="font-family:var(--font-head);font-size:1.1rem;color:var(--white);margin-bottom:1.5rem;">Languages</h3>
+      <div class="lang-items">
+        <div class="lang-item">
+          <div class="lang-flag">🇮🇳</div>
+          <div class="lang-info">
+            <div class="lang-name">Telugu <span style="font-size:.7rem;color:var(--text3);font-weight:400;">(Native)</span></div>
+            <div class="lang-bar"><div class="lang-bar-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-flag">🇮🇳</div>
+          <div class="lang-info">
+            <div class="lang-name">Hindi <span style="font-size:.7rem;color:var(--text3);font-weight:400;">(Fluent)</span></div>
+            <div class="lang-bar"><div class="lang-bar-fill" style="width:85%"></div></div>
+          </div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-flag">🇬🇧</div>
+          <div class="lang-info">
+            <div class="lang-name">English <span style="font-size:.7rem;color:var(--text3);font-weight:400;">(Professional)</span></div>
+            <div class="lang-bar"><div class="lang-bar-fill" style="width:80%"></div></div>
+          </div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-flag">🇮🇳</div>
+          <div class="lang-info">
+            <div class="lang-name">Tamil <span style="font-size:.7rem;color:var(--text3);font-weight:400;">(Conversational)</span></div>
+            <div class="lang-bar"><div class="lang-bar-fill" style="width:55%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="font-family:var(--font-head);font-size:1.1rem;color:var(--white);margin-bottom:1.5rem;">Hobbies & Interests</h3>
+      <div class="hobbies-grid">
+        <div class="hobby-card">
+          <div class="hobby-icon"><i class="fas fa-tv"></i></div>
+          <div class="hobby-label">Sci-Fi Series</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-icon"><i class="fas fa-car"></i></div>
+          <div class="hobby-label">Solo Long Drives</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-icon"><i class="fas fa-search"></i></div>
+          <div class="hobby-label">Mysterious Topics</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-icon"><i class="fas fa-users"></i></div>
+          <div class="hobby-label">Hanging with Friends</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-icon"><i class="fas fa-mountain"></i></div>
+          <div class="hobby-label">Traveling</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-icon"><i class="fas fa-water"></i></div>
+          <div class="hobby-label">Kerala & Kadamakkudy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  PAGE 9 – GALLERY
+══════════════════════════════ -->
+<section id="gallery">
+  <div class="section-eyebrow reveal">Gallery</div>
+  <h2 class="section-title reveal">Moments & <span>Work</span></h2>
+
+  <div class="gallery-grid reveal">
+    <!-- ✦ IMAGE PLACEHOLDER 9: GALLERY MAIN IMAGE ✦ -->
+    <div class="gallery-item large">
+      <div class="gallery-img-placeholder">
+        <i class="fas fa-battery-three-quarters" style="font-size:3rem;color:var(--text3);opacity:.4;"></i>
+        <span class="img-placeholder-label">[ IMG-09: Gallery – Main / Featured Work ]</span>
+        <!-- Replace with: <img src="gallery-main.jpg" alt="Battery Pack Work"> -->
+      </div>
+      <div class="gallery-overlay"><i class="fas fa-expand-alt"></i></div>
+      <div class="gallery-caption">EV Battery Pack Design Work</div>
+    </div>
+
+    <!-- ✦ IMAGE PLACEHOLDER 10: GALLERY IMAGE 2 ✦ -->
+    <div class="gallery-item">
+      <div class="gallery-img-placeholder">
+        <i class="fas fa-cog" style="font-size:2rem;color:var(--text3);opacity:.4;"></i>
+        <span class="img-placeholder-label">[ IMG-10: Gallery Image 2 ]</span>
+        <!-- Replace with: <img src="gallery-2.jpg" alt="Gallery Photo 2"> -->
+      </div>
+      <div class="gallery-overlay"><i class="fas fa-expand-alt"></i></div>
+      <div class="gallery-caption">CAD Design Work</div>
+    </div>
+
+    <div class="gallery-item">
+      <div class="gallery-img-placeholder">
+        <i class="fas fa-tools" style="font-size:2rem;color:var(--text3);opacity:.4;"></i>
+        <span class="img-placeholder-label">[ IMG-11: Gallery Image 3 ]</span>
+      </div>
+      <div class="gallery-overlay"><i class="fas fa-expand-alt"></i></div>
+      <div class="gallery-caption">Engineering Lab</div>
+    </div>
+
+    <div class="gallery-item">
+      <div class="gallery-img-placeholder">
+        <i class="fas fa-charging-station" style="font-size:2rem;color:var(--text3);opacity:.4;"></i>
+        <span class="img-placeholder-label">[ IMG-12: Gallery Image 4 ]</span>
+      </div>
+      <div class="gallery-overlay"><i class="fas fa-expand-alt"></i></div>
+      <div class="gallery-caption">EV Charging Station</div>
+    </div>
+
+    <div class="gallery-item">
+      <div class="gallery-img-placeholder">
+        <i class="fas fa-map-marked-alt" style="font-size:2rem;color:var(--text3);opacity:.4;"></i>
+        <span class="img-placeholder-label">[ IMG-13: Gallery – Travel ]</span>
+      </div>
+      <div class="gallery-overlay"><i class="fas fa-expand-alt"></i></div>
+      <div class="gallery-caption">Travel – Kerala</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+  PAGE 10 – CONTACT
+══════════════════════════════ -->
+<section id="contact">
+  <div class="section-eyebrow reveal">Get in Touch</div>
+  <h2 class="section-title reveal">Let's <span>Connect</span></h2>
+
+  <div class="contact-layout">
+    <!-- Contact Info + Map -->
+    <div class="reveal">
+      <div class="contact-info-items">
+        <div class="contact-item">
+          <div class="contact-icon-wrap"><i class="fas fa-envelope"></i></div>
+          <div>
+            <div class="contact-item-label">Email</div>
+            <div class="contact-item-value"><a href="mailto:rajukasulavada1@gmail.com">rajukasulavada1@gmail.com</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon-wrap"><i class="fas fa-phone"></i></div>
+          <div>
+            <div class="contact-item-label">Phone</div>
+            <div class="contact-item-value"><a href="tel:+919347791080">+91 9347791080</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon-wrap"><i class="fas fa-map-marker-alt"></i></div>
+          <div>
+            <div class="contact-item-label">Work Location</div>
+            <div class="contact-item-value">Koramangala, Bengaluru, Karnataka</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon-wrap"><i class="fas fa-home"></i></div>
+          <div>
+            <div class="contact-item-label">Native Place</div>
+            <div class="contact-item-value">Siddipet, Telangana</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Google Maps – Koramangala, Bengaluru -->
+      <div class="map-section">
+        <div class="map-title">Work Location – Koramangala</div>
+        <div class="map-container">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.548937028695!2d77.61839487600937!3d12.934631015730027!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae14c0a74da7f1%3A0x6e07254e0d15a8b4!2sKoramangala%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1716000000000!5m2!1sen!2sin"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Koramangala, Bengaluru">
+          </iframe>
+          <div class="map-overlay-info">
+            <div class="loc-name">Ola Electric Technologies</div>
+            <div class="loc-detail">Koramangala, Bengaluru, Karnataka</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="contact-form reveal">
+      <div style="margin-bottom:2rem;">
+        <h3 style="font-family:var(--font-head);font-size:1.3rem;font-weight:800;color:var(--white);margin-bottom:.7rem;">Send a Message</h3>
+        <p style="font-size:.88rem;color:var(--text2);line-height:1.7;">Have a project, collaboration idea, or just want to connect? Drop me a message and I'll get back to you shortly.</p>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" placeholder="John">
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" placeholder="Doe">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" placeholder="Project Inquiry / Collaboration">
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="Tell me about your project or reason for reaching out..."></textarea>
+      </div>
+      <button class="btn-submit">
+        <i class="fas fa-paper-plane" style="margin-right:.6rem;"></i>Send Message
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-left">
+    © 2025 <strong>Raju Kasulavada</strong> · Battery Pack Design Engineer
+  </div>
+  <div class="footer-socials">
+    <a href="mailto:rajukasulavada1@gmail.com" class="social-btn" title="Email"><i class="fas fa-envelope"></i></a>
+    <a href="tel:+919347791080" class="social-btn" title="Phone"><i class="fas fa-phone"></i></a>
+    <a href="#" class="social-btn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
+  </div>
+  <div class="footer-right">Designed & Built by Raju Kasulavada</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      ring.style.left = e.clientX + 'px';
+      ring.style.top = e.clientY + 'px';
+    }, 80);
+  });
+  document.querySelectorAll('a,button,.skill-card,.exp-card,.project-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2)'; ring.style.transform = 'translate(-50%,-50%) scale(1.5)'; });
+    el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.transform = 'translate(-50%,-50%) scale(1)'; });
+  });
+
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('scrollBar').style.width = scrolled + '%';
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.08 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Timeline stagger
+  document.querySelectorAll('.timeline-item').forEach((el, i) => {
+    el.style.animationDelay = (i * 0.15) + 's';
+  });
+</script>
+</body>
+</html>
